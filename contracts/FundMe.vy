@@ -1,10 +1,9 @@
-# @version >=0.2.4 <0.3.0
-
+# @version 0.2.16
 
 interface AggregatorV3Interface:
     def version() -> uint256: view
     def description() -> String[100]: view
-
+    def latestRoundData() -> (int256, int256,uint256,uint256,int256) : view 
 
 owner: public(address)
 struct Funder:
@@ -20,10 +19,49 @@ def __init__(_priceFeed: address):
     self.Count = 0
     self.priceFeed = AggregatorV3Interface(_priceFeed)
 
+@view
+@external
+def getVersion() -> uint256:
+    return self.priceFeed.version()
+
+@view
+@external 
+def getDescription() -> String[100]:
+    return self.priceFeed.description()
+
+@view
+@internal
+def getPrice() -> int256:
+    a: int256 = 0
+    price: int256 = 0
+    b: uint256 = 0
+    c: uint256 = 0
+    d: int256 = 0
+    (a,price,b,c,d) = self.priceFeed.latestRoundData() 
+    return (price * 10000000000)
+
+@view
+@internal
+def getConversionRate(ethAmount: uint256) -> uint256:
+    price: int256 = self.getPrice()
+    ethPrice: uint256 = convert(price,uint256)
+    ethAmountInUsd: uint256 = (ethPrice * ethAmount) / 1000000000000000000
+    return ethAmountInUsd
+
+@view
+@external
+def getEntranceFee() -> int256:
+    minimumUSD: int256 = 10 * 10 ** 18 # 10 dollars equivalent worth of Eth
+    price: int256 = self.getPrice()
+    precision: int256 = 1 * 10**18
+    return (minimumUSD * precision) / price
+
 @external
 @payable
 def fund():
-    assert msg.value > 1 * 10 ** 16, "Not enough money sent"
+    minimumUSD: uint256 = 10 * 10 ** 18 # 10 dollars equivalent worth of Eth
+    #ValueInUSDsent: uint256 = self.getConversionRate(msg.value)
+    assert  self.getConversionRate(msg.value) > minimumUSD, "Not enough money sent"
     funder: Funder = Funder({Sender: msg.sender,AmountSent: msg.value})
     self.Count += 1
     self.FunderList[self.Count] = funder
@@ -36,13 +74,3 @@ def withdraw():
     # In the Patrick Collins code, there is a reset of the array, after some discussion in the Vyper discord
     # it is not optimal and can be dangerous to create a loop and resetting the value of the FunderList
     # So do nothing in the contract state after withdraw function
-
-@view
-@external
-def getVersion() -> uint256:
-    return self.priceFeed.version()
-
-@view
-@external 
-def getDescription() -> String[100]:
-    return self.priceFeed.description()

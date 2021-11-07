@@ -5,6 +5,8 @@ compiler:
   solc:
     remappings:
       - '@chainlink=smartcontractkit/chainlink-brownie-contracts@1.1.1'
+  vyper:
+    version: 0.2.16
 
 dotenv: .env
 networks:

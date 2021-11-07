@@ -14,4 +14,5 @@ export WEB3_INFURA_PROJECT_ID="YOUR_INFURA_ID"
 ```
 
 Only the contract have been changed, the python script for deploying and interacting with the contract are close to the original.
+
 This code is mainly designed to be deployed on the Kovan testnet

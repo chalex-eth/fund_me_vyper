@@ -1,6 +1,8 @@
 # fund_me_vyper
 
-This repo is the Vyper version of the [brownie_fund_me](https://github.com/PatrickAlphaC/brownie_fund_me) from [Patrick Collins](https://github.com/PatrickAlphaC)
+This repo is the Vyper version of the [brownie_fund_me](https://github.com/PatrickAlphaC/brownie_fund_me) from [Patrick Collins](https://github.com/PatrickAlphaC).
+
+
 Feel free to pull a request or an issue if you figure out how to improve the Vyper code.
 
 # Important note
